@@ -18,10 +18,12 @@ private:
   DataType _slow_rec_rec_ewma;
   DataType _rtt_diff;
   DataType _queueing_delay;
+  // DataType _min_rtt;
 
   double _last_tick_sent;
   double _last_tick_received;
-  double _min_rtt;
+  // double _min_rtt;
+  DataType _min_rtt;
 
 public:
   Memory( const std::vector< DataType > & s_data )
@@ -33,7 +35,8 @@ public:
       _queueing_delay( s_data.at(5) ),
       _last_tick_sent( 0 ),
       _last_tick_received( 0 ),
-      _min_rtt( 0 )
+      _min_rtt( s_data.at(6) )
+      // _min_rtt( 0 )
   {}
 
   Memory()
@@ -52,8 +55,8 @@ public:
 
   static const unsigned int datasize = 6;
 
-  const DataType & field( unsigned int num ) const { return num == 0 ? _rec_send_ewma : num == 1 ? _rec_rec_ewma : num == 2 ? _rtt_ratio : num == 3 ? _slow_rec_rec_ewma : num == 4 ? _rtt_diff : _queueing_delay ; }
-  DataType & mutable_field( unsigned int num )     { return num == 0 ? _rec_send_ewma : num == 1 ? _rec_rec_ewma : num == 2 ? _rtt_ratio : num == 3 ? _slow_rec_rec_ewma : num == 4 ? _rtt_diff : _queueing_delay ; }
+  const DataType & field( unsigned int num ) const { return num == 0 ? _rec_send_ewma : num == 1 ? _rec_rec_ewma : num == 2 ? _rtt_ratio : num == 3 ? _slow_rec_rec_ewma : num == 4 ? _rtt_diff : num == 5? _queueing_delay : _min_rtt ; }
+  DataType & mutable_field( unsigned int num )     { return num == 0 ? _rec_send_ewma : num == 1 ? _rec_rec_ewma : num == 2 ? _rtt_ratio : num == 3 ? _slow_rec_rec_ewma : num == 4 ? _rtt_diff : num == 5? _queueing_delay : _min_rtt ; }
 
   void packet_sent( const Packet & packet __attribute((unused)) ) {}
   void packets_received( const std::vector< Packet > & packets, const unsigned int flow_id, const int largest_ack );

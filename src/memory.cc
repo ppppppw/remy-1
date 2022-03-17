@@ -48,7 +48,7 @@ void Memory::packets_received( const vector< Packet > & packets, const unsigned 
 string Memory::str( void ) const
 {
   char tmp[ 256 ];
-  snprintf( tmp, 256, "sewma=%f, rewma=%f, rttr=%f, slowrewma=%f, rttd=%f, qdelay=%f", _rec_send_ewma, _rec_rec_ewma, _rtt_ratio, _slow_rec_rec_ewma, _rtt_diff, _queueing_delay );
+  snprintf( tmp, 256, "sewma=%f, rewma=%f, rttr=%f, slowrewma=%f, rttd=%f, qdelay=%f, minrtt=%f,", _rec_send_ewma, _rec_rec_ewma, _rtt_ratio, _slow_rec_rec_ewma, _rtt_diff, _queueing_delay, _min_rtt );
   return tmp;
 }
 
@@ -74,13 +74,16 @@ string Memory::str( unsigned int num ) const
     case 5:
       snprintf( tmp, 50, "qdelay=%f ", _queueing_delay );
       break;
+    case 6:
+      snprintf( tmp, 50, "minrtt=%f ", _min_rtt );
+    break;
   }
   return tmp;
 }
 
 const Memory & MAX_MEMORY( void )
 {
-  static const Memory max_memory( { 163840, 163840, 163840, 163840, 163840, 163840 } );
+  static const Memory max_memory( { 163840, 163840, 163840, 163840, 163840, 163840, 163840 } );
   return max_memory;
 }
 
@@ -93,6 +96,7 @@ RemyBuffers::Memory Memory::DNA( void ) const
   ret.set_slow_rec_rec_ewma( _slow_rec_rec_ewma );
   ret.set_rtt_diff( _rtt_diff );
   ret.set_queueing_delay( _queueing_delay );
+  ret.set_min_rtt( _min_rtt );
   return ret;
 }
 
@@ -109,7 +113,7 @@ Memory::Memory( const bool is_lower_limit, const RemyBuffers::Memory & dna )
     _queueing_delay( get_val_or_default( dna, queueing_delay, is_lower_limit ) ),
     _last_tick_sent( 0 ),
     _last_tick_received( 0 ),
-    _min_rtt( 0 )
+    _min_rtt( get_val_or_default( dna, min_rtt, is_lower_limit ) )
 {
 }
 
@@ -122,6 +126,7 @@ size_t hash_value( const Memory & mem )
   boost::hash_combine( seed, mem._slow_rec_rec_ewma );
   boost::hash_combine( seed, mem._rtt_diff );
   boost::hash_combine( seed, mem._queueing_delay );
+  boost::hash_combine( seed, mem._min_rtt );
 
   return seed;
 }

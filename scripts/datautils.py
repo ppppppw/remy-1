@@ -60,6 +60,7 @@ class RunData(object):
         "slow_rec_rec_ewma": ("sender_state", "memory", "slow_rec_rec_ewma"),
         "queueing_delay": ("sender_state", "memory", "queueing_delay"),
         "rtt_diff": ("sender_state", "memory", "rtt_diff"),
+        "min_rtt": ("sender_state", "memory", "min_rtt"),
     }
 
     ACTION_ATTRIBUTES = [
